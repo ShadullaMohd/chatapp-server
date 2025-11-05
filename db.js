@@ -39,7 +39,7 @@ export const pool = new Pool({
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME,
   ssl: isProduction
-    ? { rejectUnauthorized: false } // ✅ needed for Render
-    : false,                        // for local dev
+    ? { require: true, rejectUnauthorized: false } // ✅ required for Render
+    : false,                      // for local dev
 
 });
