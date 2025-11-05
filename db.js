@@ -4,6 +4,8 @@ dotenv.config();
 
 const { Pool, Client } = pg;
 
+const isProduction = process.env.NODE_ENV === "production";
+
 async function ensureDatabaseExists() {
   const client = new Client({
     user: process.env.DB_USER,
@@ -34,9 +36,10 @@ export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+  port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: false, // ✅ allows SSL without certificate verification
-  },
+  ssl: isProduction
+    ? { rejectUnauthorized: false } // ✅ needed for Render
+    : false,                        // for local dev
+
 });
