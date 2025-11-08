@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export const sendOtpEmail = async (toEmail, username, otp) => {
   try {
     await resend.emails.send({
-      from: "Chat App <onboarding@resend.dev>", // ✅ required format
+      from: "Chat App <chatxapp4@gmail.com>", // ✅ required format
       to: toEmail,
       subject: "Your OTP Code - Chat App Verification",
       html: `
