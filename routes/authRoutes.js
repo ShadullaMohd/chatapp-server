@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
     // ✅ Generate OTP & send mail
     const otp = generateOtp();
     const expires = new Date(Date.now() + 15 * 60 * 1000);
-    await updateUserOtp(username, otp, expires);
+    await updateUserOtp(email, otp, expires);
     await sendOtpEmail(email, username, otp);
 
     res.status(201).json({ message: "OTP sent to your Gmail. Please verify." });
@@ -75,7 +75,7 @@ router.post("/verify-otp", async (req, res) => {
     if (now > new Date(user.otp_expires_at))
       return res.status(400).json({ message: "OTP expired" });
 
-    await verifyUser(user.username);
+    await verifyUser(email);
     res.json({ message: "Email verified. You can now log in." });
   } catch (err) {
     console.error("❌ Error verifying OTP:", err);
@@ -141,7 +141,7 @@ router.post("/send-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
-    await updateUserOtp(username, otp, expires);
+    await updateUserOtp(email, otp, expires);
     await sendOtpEmail(email, username, otp);
 
     res.json({ message: "OTP sent successfully" });
