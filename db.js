@@ -4,17 +4,18 @@ dotenv.config();
 
 const { Pool, Client } = pg;
 
-// Determine SSL usage
-const useSSL = process.env.DB_SSL === "true";
-
 async function ensureDatabaseExists() {
+  // Always use SSL, even for checking database
   const client = new Client({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    database: "postgres",
-    ssl: useSSL ? { require: true, rejectUnauthorized: false } : false,
+    database: "postgres", // connect to default postgres DB
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   });
 
   try {
@@ -22,7 +23,6 @@ async function ensureDatabaseExists() {
 
     const dbName = process.env.DB_NAME;
     const res = await client.query(`SELECT 1 FROM pg_database WHERE datname='${dbName}'`);
-
     if (res.rowCount === 0) {
       await client.query(`CREATE DATABASE ${dbName}`);
       console.log(`✅ Database "${dbName}" created successfully!`);
@@ -36,13 +36,18 @@ async function ensureDatabaseExists() {
   }
 }
 
+// Ensure DB exists before connecting
 await ensureDatabaseExists();
 
+// ✅ Use SSL in pool connection too
 export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME,
-  ssl: useSSL ? { require: true, rejectUnauthorized: false } : false,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false,
+  },
 });
