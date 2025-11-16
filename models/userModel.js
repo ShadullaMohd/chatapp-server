@@ -57,17 +57,17 @@ export async function findUserByEmail(email) {
 }
 
 // ✅ Update user OTP
-export async function updateUserOtp(username, otp, expiresAt) {
+export async function updateUserOtp(email, otp, expiresAt) {
   await pool.query(
-    "UPDATE users SET otp_code=$1, otp_expires_at=$2 WHERE username=$3",
-    [otp, expiresAt, username]
+    "UPDATE users SET otp_code=$1, otp_expires_at=$2 WHERE email=$3",
+    [otp, expiresAt, email]
   );
 }
 
 // ✅ Verify user (mark verified + clear OTP)
-export async function verifyUser(username) {
+export async function verifyUser(email) {
   await pool.query(
-    "UPDATE users SET is_verified=TRUE, otp_code=NULL, otp_expires_at=NULL WHERE username=$1",
-    [username]
-  );
+    "UPDATE users SET is_verified=TRUE, otp_code=NULL, otp_expires_at=NULL WHERE email=$1",
+    [email]
+  )
 }
